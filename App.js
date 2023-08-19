@@ -3,15 +3,20 @@ import { StyleSheet, View, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
+import { Camera } from 'expo-camera';
+import * as Permissions from 'expo-permissions';
+
 const PlaceholderImage = require('./assets/images/rose.jpg');
+
 
 export default function App() {
   //Set state for selected image and app options
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
+  const cameraRef = useRef(null);
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -28,6 +33,8 @@ export default function App() {
       alert('You did not select any image.');
     }
   };
+
+
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
@@ -35,11 +42,33 @@ export default function App() {
 
   const onAddSticker = () => {
     // we will implement this later
+    // this is where I add the classify model
+    alert("You have classified")
   };
 
   const onSaveImageAsync = async () => {
     // we will implement this later
   };
+
+  const getCameraPermissions = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    return status === 'granted';
+  };
+
+  const takePhotoAsync = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+
+    if (status === 'granted') {
+      if (cameraRef.current) {
+        const photo = await cameraRef.current.takePictureAsync();
+        setSelectedImage(photo.uri);
+        setShowAppOptions(true);
+      }
+    } else {
+      alert('Camera permission denied.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -47,6 +76,15 @@ export default function App() {
           placeholderImageSource={PlaceholderImage}
           selectedImage={selectedImage}
         />
+        {/* {selectedImage ? (
+          <ImageViewer selectedImage={selectedImage} />
+        ) : (
+          <Camera
+            style={styles.camera}
+            type={Camera.Constants.Type.back}
+            ref={cameraRef}
+          />
+        )} */}
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
@@ -60,7 +98,7 @@ export default function App() {
         <View style={styles.footerContainer}>
           <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
           <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
-          <Button label="Classify" onPress={()=>alert("You have classified")} />
+          {/* <Button label="Classify" onPress={()=>alert("You have classified")} /> */}
         </View>
       )}
       <StatusBar style="auto" />
@@ -96,4 +134,3 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 });
-
