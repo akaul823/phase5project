@@ -9,14 +9,18 @@ import IconButton from './components/IconButton';
 const PlaceholderImage = require('./assets/images/rose.jpg');
 
 export default function App() {
+  //Set state for selected image and app options
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
+
+  // launch the image library and pick an image
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
     });
 
+    //Ensure a picture is selected and set the current state to that picture
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
       setShowAppOptions(true);
@@ -24,6 +28,7 @@ export default function App() {
       alert('You did not select any image.');
     }
   };
+  //This resets options
   const onReset = () => {
     setShowAppOptions(false);
   };
@@ -55,6 +60,7 @@ export default function App() {
         <View style={styles.footerContainer}>
           <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
           <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
+          <Button label="Classify" onPress={()=>alert("You have classified")} />
         </View>
       )}
       <StatusBar style="auto" />
