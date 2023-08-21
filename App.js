@@ -3,7 +3,7 @@ import { StyleSheet, View, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera } from 'expo-camera';
@@ -16,7 +16,9 @@ export default function App() {
   //Set state for selected image and app options
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
-  const cameraRef = useRef(null);
+  const [startCamera,setStartCamera] = useState(false)
+  
+  const cameraRef = useRef();
   
 
   // launch the image library and pick an image
@@ -25,7 +27,6 @@ export default function App() {
       allowsEditing: true,
       quality: 1,
     });
-
     //Ensure a picture is selected and set the current state to that picture
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
@@ -34,44 +35,48 @@ export default function App() {
       alert('You did not select any image.');
     }
   };
-
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
   };
-
   const onAddSticker = () => {
     // we will implement this later
     // this is where I add the classify model
     alert("You have classified")
   };
-
   const onSaveImageAsync = async () => {
     // we will implement this later
   };
 
+
+  // useEffect(()=>{
+    
+
+  // }, [])
   const takePhotoAsync = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
 
     if (status === 'granted') {
-      if (cameraRef.current) {
-        const photo = await cameraRef.current.takePictureAsync();
-        setShowAppOptions(false); // Hide other options when camera is open
-        setSelectedImage(null); // Reset selected image
-        // setSelectedImage(photo.uri);
-        // setShowAppOptions(true);
-        return(
-        <View style={styles.container}>
-          <Camera style={styles.camera} type={type}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-                <Text style={styles.text}>Flip Camera</Text>
-              </TouchableOpacity>
-            </View>
-          </Camera>
-        </View>
-        )
-      }
+      console.log(cameraRef.current)
+      setStartCamera(true)
+      const photo = await cameraRef.current.takePictureAsync();
+      setSelectedImage(photo.uri);
+      setShowAppOptions(true);
+      
+        
+      //   return(
+      //   <View style={styles.container}>
+      //     <Camera style={styles.camera} type={type}>
+      //       <View style={styles.buttonContainer}>
+      //         <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+      //           <Text style={styles.text}>Flip Camera</Text>
+      //         </TouchableOpacity>
+      //       </View>
+      //     </Camera>
+
+      //   </View>
+      //   )
+      
     } else {
       alert('Camera permission denied.');
     }
@@ -80,19 +85,15 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-      <ImageViewer
+      {/* <ImageViewer
           placeholderImageSource={PlaceholderImage}
           selectedImage={selectedImage}
-        />
-        {/* {selectedImage ? (
-          <ImageViewer selectedImage={selectedImage} />
-        ) :
-          <Camera
-            style={styles.camera}
-            type={Camera.Constants.Type.back}
-            ref={cameraRef}
-          />
-        } */}
+        /> */}
+        {startCamera ? (
+        <Camera></Camera>
+        ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
+
+        }
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
