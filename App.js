@@ -16,6 +16,7 @@ export default function App() {
   //Set state for selected image and app options
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
+  const cameraRef = useRef(null);
   
 
   // launch the image library and pick an image
@@ -55,14 +56,27 @@ export default function App() {
     if (status === 'granted') {
       if (cameraRef.current) {
         const photo = await cameraRef.current.takePictureAsync();
-        setSelectedImage(photo.uri);
-        setShowAppOptions(true);
+        setShowAppOptions(false); // Hide other options when camera is open
+        setSelectedImage(null); // Reset selected image
+        // setSelectedImage(photo.uri);
+        // setShowAppOptions(true);
+        return(
+        <View style={styles.container}>
+          <Camera style={styles.camera} type={type}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+                <Text style={styles.text}>Flip Camera</Text>
+              </TouchableOpacity>
+            </View>
+          </Camera>
+        </View>
+        )
       }
     } else {
       alert('Camera permission denied.');
     }
   };
-  const cameraRef = useRef(null);
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
