@@ -8,7 +8,7 @@ import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
-
+import icon from "./assets/icon.png"
 const PlaceholderImage = require('./assets/images/rose.jpg');
 
 
@@ -16,7 +16,7 @@ export default function App() {
   //Set state for selected image and app options
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
-  const cameraRef = useRef(null);
+  
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -34,7 +34,6 @@ export default function App() {
     }
   };
 
-
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
@@ -50,11 +49,6 @@ export default function App() {
     // we will implement this later
   };
 
-  const getCameraPermissions = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    return status === 'granted';
-  };
-
   const takePhotoAsync = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
 
@@ -68,7 +62,7 @@ export default function App() {
       alert('Camera permission denied.');
     }
   };
-
+  const cameraRef = useRef(null);
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -78,13 +72,13 @@ export default function App() {
         />
         {/* {selectedImage ? (
           <ImageViewer selectedImage={selectedImage} />
-        ) : (
+        ) :
           <Camera
             style={styles.camera}
             type={Camera.Constants.Type.back}
             ref={cameraRef}
           />
-        )} */}
+        } */}
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
@@ -98,7 +92,7 @@ export default function App() {
         <View style={styles.footerContainer}>
           <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
           <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
-          {/* <Button label="Classify" onPress={()=>alert("You have classified")} /> */}
+          <Button label="Open Camera" onPress={takePhotoAsync} />
         </View>
       )}
       <StatusBar style="auto" />
@@ -122,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   footerContainer: {
-    flex: 1 / 3,
+    flex: 1 / 2,
     alignItems: 'center',
   },
   optionsContainer: {
@@ -133,4 +127,72 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-});
+ });
+//---------------------------------------------------------------------------------------------------
+// import { Camera, CameraType } from 'expo-camera';
+// import { useState } from 'react';
+// import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+// export default function App() {
+//   const [type, setType] = useState(CameraType.back);
+//   const [permission, requestPermission] = Camera.useCameraPermissions();
+
+//   if (!permission) {
+//     // Camera permissions are still loading
+//     console.log("loading")
+//     return <View />;
+//   }
+
+//   if (!permission.granted) {
+//     // Camera permissions are not granted yet
+//     return (
+//       <View style={styles.container}>
+//         <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
+//         <Button onPress={requestPermission} title="grant permission" />
+//       </View>
+//     );
+//   }
+
+//   function toggleCameraType() {
+//     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+//   }
+
+//   return (
+//     <View style={styles.container}>
+//       <Camera style={styles.camera} type={type}>
+//         <View style={styles.buttonContainer}>
+//           <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+//             <Text style={styles.text}>Flip Camera</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </Camera>
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: 'center',
+//   },
+//   camera: {
+//     flex: 1,
+//   },
+//   buttonContainer: {
+//     flex: 1,
+//     flexDirection: 'row',
+//     backgroundColor: 'transparent',
+//     margin: 64,
+//   },
+//   button: {
+//     flex: 1,
+//     alignSelf: 'flex-end',
+//     alignItems: 'center',
+//   },
+//   text: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//     color: 'white',
+//   },
+// });
+
