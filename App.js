@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
@@ -18,7 +18,7 @@ export default function App() {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [startCamera,setStartCamera] = useState(false)
   
-  const cameraRef = useRef();
+  const cameraRef = useRef(null);
   
 
   // launch the image library and pick an image
@@ -59,9 +59,9 @@ export default function App() {
     if (status === 'granted') {
       console.log(cameraRef.current)
       setStartCamera(true)
-      const photo = await cameraRef.current.takePictureAsync();
-      setSelectedImage(photo.uri);
-      setShowAppOptions(true);
+      // const photo = await cameraRef.current.takePictureAsync();
+      // setSelectedImage(photo.uri);
+      // setShowAppOptions(true);
       
         
       //   return(
@@ -90,7 +90,11 @@ export default function App() {
           selectedImage={selectedImage}
         /> */}
         {startCamera ? (
-        <Camera></Camera>
+          <Camera>
+            <Text>
+              THIS IS A CAMERA
+            </Text>
+          </Camera>
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
 
         }
