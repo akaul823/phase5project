@@ -90,6 +90,14 @@ export default function App() {
             </TouchableOpacity>
             </View>
 
+            <View>
+              <TouchableOpacity onPress={()=>{
+            setStartCamera(false)
+            }}>
+                <Text style={styles.text}>X</Text>
+              </TouchableOpacity>
+            </View>
+
           </Camera>
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
       }
@@ -155,7 +163,7 @@ const styles = StyleSheet.create({
     bottom: -40,
   },
   flipCam:{
-    bottom: 300
+    bottom: 290
   },
   button: {
     flex: 1,
