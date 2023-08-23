@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image, Text } from 'react-native';
+import { StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from './components/ImageViewer';
 import Button from './components/Button';
 import { useState, useRef, useEffect } from 'react';
 import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
-import { Camera } from 'expo-camera';
+import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import icon from "./assets/icon.png"
 const PlaceholderImage = require('./assets/images/rose.jpg');
@@ -17,6 +17,7 @@ export default function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [startCamera,setStartCamera] = useState(false)
+  const [type, setType] = useState(CameraType.back);
   
   const cameraRef = useRef(null);
   
@@ -53,50 +54,37 @@ export default function App() {
     
 
   // }, [])
-  const takePhotoAsync = async () => {
+  const openCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
 
     if (status === 'granted') {
       console.log(cameraRef.current)
       setStartCamera(true)
-      // const photo = await cameraRef.current.takePictureAsync();
-      // setSelectedImage(photo.uri);
-      // setShowAppOptions(true);
-      
-        
-      //   return(
-      //   <View style={styles.container}>
-      //     <Camera style={styles.camera} type={type}>
-      //       <View style={styles.buttonContainer}>
-      //         <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-      //           <Text style={styles.text}>Flip Camera</Text>
-      //         </TouchableOpacity>
-      //       </View>
-      //     </Camera>
-
-      //   </View>
-      //   )
+      const photo = await cameraRef.current.takePictureAsync();
+      setSelectedImage(photo.uri);
+      setShowAppOptions(true);
+      // setStartCamera(false)
       
     } else {
       alert('Camera permission denied.');
     }
   };
+  function toggleCameraType() {
+    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-      {/* <ImageViewer
-          placeholderImageSource={PlaceholderImage}
-          selectedImage={selectedImage}
-        /> */}
         {startCamera ? (
-          <Camera>
-            <Text>
-              THIS IS A CAMERA
-            </Text>
-          </Camera>
+        <Camera style={styles.camera} type={type}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+              <Text style={styles.text}>Flip Camera</Text>
+            </TouchableOpacity>
+          </View>
+        </Camera>
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
-
         }
       </View>
       {showAppOptions ? (
@@ -111,7 +99,7 @@ export default function App() {
         <View style={styles.footerContainer}>
           <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
           <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
-          <Button label="Open Camera" onPress={takePhotoAsync} />
+          <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
       <StatusBar style="auto" />
@@ -145,6 +133,25 @@ const styles = StyleSheet.create({
   optionsRow: {
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    margin: 64,
+  },
+  button: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
   },
  });
 //---------------------------------------------------------------------------------------------------
@@ -194,24 +201,24 @@ const styles = StyleSheet.create({
 //     flex: 1,
 //     justifyContent: 'center',
 //   },
-//   camera: {
-//     flex: 1,
-//   },
-//   buttonContainer: {
-//     flex: 1,
-//     flexDirection: 'row',
-//     backgroundColor: 'transparent',
-//     margin: 64,
-//   },
-//   button: {
-//     flex: 1,
-//     alignSelf: 'flex-end',
-//     alignItems: 'center',
-//   },
-//   text: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     color: 'white',
-//   },
+  // camera: {
+  //   flex: 1,
+  // },
+  // buttonContainer: {
+  //   flex: 1,
+  //   flexDirection: 'row',
+  //   backgroundColor: 'transparent',
+  //   margin: 64,
+  // },
+  // button: {
+  //   flex: 1,
+  //   alignSelf: 'flex-end',
+  //   alignItems: 'center',
+  // },
+  // text: {
+  //   fontSize: 24,
+  //   fontWeight: 'bold',
+  //   color: 'white',
+  // },
 // });
 
