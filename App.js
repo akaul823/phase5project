@@ -86,7 +86,7 @@ export default function App() {
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
         }
       </View>
-      {showAppOptions ? (
+      {showAppOptions && !startCamera ? (
         <View style={styles.optionsContainer}>
         <View style={styles.optionsRow}>
           <IconButton icon="refresh" label="Reset" onPress={onReset} />
@@ -97,7 +97,9 @@ export default function App() {
       ) : (
         <View style={styles.footerContainer}>
           <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
-          <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
+          <Button label="Use this photo" onPress={() => {
+            setStartCamera(false)
+            setShowAppOptions(true)}} />
           <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
