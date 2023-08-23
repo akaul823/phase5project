@@ -49,24 +49,20 @@ export default function App() {
     // we will implement this later
   };
 
-
-  // useEffect(()=>{
-    
-
-  // }, [])
   const openCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
-
     if (status === 'granted') {
-      console.log(cameraRef.current)
       setStartCamera(true)
-      const photo = await cameraRef.current.takePictureAsync();
-      setSelectedImage(photo.uri);
-      setShowAppOptions(true);
-      // setStartCamera(false)
-      
     } else {
       alert('Camera permission denied.');
+    }
+  };
+
+  const takePictureAsync = async () => {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync();
+      setSelectedImage(photo.uri);
+      setShowAppOptions(false);
     }
   };
   function toggleCameraType() {
@@ -77,13 +73,16 @@ export default function App() {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         {startCamera ? (
-        <Camera style={styles.camera} type={type}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-              <Text style={styles.text}>Flip Camera</Text>
+          <Camera style={styles.camera} type={type} ref={cameraRef}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+                <Text style={styles.text}>Flip Camera</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={styles.takePictureButton} onPress={takePictureAsync}>
+              <Text style={styles.text}>Take Picture</Text>
             </TouchableOpacity>
-          </View>
-        </Camera>
+          </Camera>
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
         }
       </View>
@@ -136,6 +135,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    justifyContent: 'flex-end', // Adjust this to position camera controls at the bottom
   },
   buttonContainer: {
     flex: 1,
@@ -154,71 +154,3 @@ const styles = StyleSheet.create({
     color: 'white',
   },
  });
-//---------------------------------------------------------------------------------------------------
-// import { Camera, CameraType } from 'expo-camera';
-// import { useState } from 'react';
-// import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-// export default function App() {
-//   const [type, setType] = useState(CameraType.back);
-//   const [permission, requestPermission] = Camera.useCameraPermissions();
-
-//   if (!permission) {
-//     // Camera permissions are still loading
-//     console.log("loading")
-//     return <View />;
-//   }
-
-//   if (!permission.granted) {
-//     // Camera permissions are not granted yet
-//     return (
-//       <View style={styles.container}>
-//         <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-//         <Button onPress={requestPermission} title="grant permission" />
-//       </View>
-//     );
-//   }
-
-//   function toggleCameraType() {
-//     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <Camera style={styles.camera} type={type}>
-//         <View style={styles.buttonContainer}>
-//           <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-//             <Text style={styles.text}>Flip Camera</Text>
-//           </TouchableOpacity>
-//         </View>
-//       </Camera>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//   },
-  // camera: {
-  //   flex: 1,
-  // },
-  // buttonContainer: {
-  //   flex: 1,
-  //   flexDirection: 'row',
-  //   backgroundColor: 'transparent',
-  //   margin: 64,
-  // },
-  // button: {
-  //   flex: 1,
-  //   alignSelf: 'flex-end',
-  //   alignItems: 'center',
-  // },
-  // text: {
-  //   fontSize: 24,
-  //   fontWeight: 'bold',
-  //   color: 'white',
-  // },
-// });
-
