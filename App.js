@@ -78,14 +78,18 @@ export default function App() {
       <View style={styles.imageContainer}>
       {startCamera ? (
           <Camera style={styles.camera} type={type} ref={cameraRef}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-                <Text style={styles.text}>Flip Camera</Text>
+            <View style={styles.flipCam}>
+              <TouchableOpacity onPress={toggleCameraType}>
+                <Text style={styles.text}>Flip</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={takePictureAsync}>
+
+            <View style={styles.takePic}>
+              <TouchableOpacity onPress={takePictureAsync}>
               <Text style={styles.text}>Take Picture</Text>
             </TouchableOpacity>
+            </View>
+
           </Camera>
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
       }
@@ -144,12 +148,14 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
     justifyContent: 'flex-end', // Adjust this to position camera controls at the bottom
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: 'row',
     backgroundColor: 'transparent',
+  },
+  takePic: {
     margin: 64,
+    bottom: -40,
+  },
+  flipCam:{
+    bottom: 300
   },
   button: {
     flex: 1,
