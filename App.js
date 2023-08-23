@@ -98,7 +98,9 @@ export default function App() {
       </View>
       ) : (
         <View style={styles.footerContainer}>
-          <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
+          <Button theme="primary" label="Choose a photo" onPress={()=>{
+            setStartCamera(false)
+            pickImageAsync()}} />
           <Button label="Use this photo" onPress={() => {
             setStartCamera(false)
             setShowAppOptions(true)}} />
