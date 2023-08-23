@@ -61,8 +61,9 @@ export default function App() {
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      setSelectedImage(photo.uri);
-      // setShowAppOptions(false);
+      setSelectedImage(photo.uri); // Update the selected image with the URI of the captured photo
+      setStartCamera(false); // Turn off the camera view after taking the picture
+      setShowAppOptions(true);
     }
   };
 
