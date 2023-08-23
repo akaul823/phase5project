@@ -62,9 +62,10 @@ export default function App() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       setSelectedImage(photo.uri);
-      setShowAppOptions(false);
+      // setShowAppOptions(false);
     }
   };
+
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
@@ -72,21 +73,21 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        {startCamera ? (
+      {startCamera ? (
           <Camera style={styles.camera} type={type} ref={cameraRef}>
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
                 <Text style={styles.text}>Flip Camera</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.takePictureButton} onPress={takePictureAsync}>
+            <TouchableOpacity onPress={takePictureAsync}>
               <Text style={styles.text}>Take Picture</Text>
             </TouchableOpacity>
           </Camera>
         ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
-        }
+      }
       </View>
-      {showAppOptions && !startCamera ? (
+      {showAppOptions ? (
         <View style={styles.optionsContainer}>
         <View style={styles.optionsRow}>
           <IconButton icon="refresh" label="Reset" onPress={onReset} />
