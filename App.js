@@ -17,7 +17,7 @@ export default function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [startCamera,setStartCamera] = useState(false)
-  const [type, setType] = useState(CameraType.back);
+  const [type, setType] = useState(CameraType.back); //
   
   const cameraRef = useRef(null);
   
@@ -51,6 +51,7 @@ export default function App() {
     // we will implement this later
   };
 
+  //change
   const openCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === 'granted') {
@@ -60,6 +61,7 @@ export default function App() {
     }
   };
 
+  //change
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
@@ -69,10 +71,12 @@ export default function App() {
     }
   };
 
+  //change
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
+  //camera view change
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
