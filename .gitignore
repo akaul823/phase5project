@@ -33,3 +33,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+best_model.ptl
+best_model.ptl:Zone.Identifier
