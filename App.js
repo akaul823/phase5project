@@ -9,6 +9,9 @@ import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import icon from "./assets/icon.png"
+import * as tf from '@tensorflow/tfjs';
+// import { load, loadTFLiteModel } from '@tensorflow/tfjs-react-native';
+
 const PlaceholderImage = require('./assets/images/rose.jpg');
 //new branch
 
@@ -18,9 +21,37 @@ export default function App() {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [startCamera,setStartCamera] = useState(false)
   const [type, setType] = useState(CameraType.back); //
-  
+  const [ isModelReady, setIsModelReady] = useState(false)
+
   const cameraRef = useRef(null);
+
+  // useEffect(() => {
+  //   async function loadModel() {
+  //     try {
+  //       await load();
+  //       setIsModelReady(true);
+  //     } catch (error) {
+  //       console.error('Error loading TensorFlow model:', error);
+  //     }
+  //   }
+
+  //   loadModel();
+  // }, []);
+
   
+  // const runInference = async () => {
+  //   if (!isModelReady) return;
+
+  //   // Load the TFLite model
+  //   const model = await loadTFLiteModel('assets/best_model.tflite');
+    
+  //   // Perform inference using the model
+  //   // Replace this with your actual inference code
+  //   const input = selectedImage; // Your input data
+  //   const output = model.predict(input);
+
+  //   console.log('Inference output:', output);
+  // };
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
