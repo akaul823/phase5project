@@ -10,7 +10,7 @@ import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import icon from "./assets/icon.png"
 const PlaceholderImage = require('./assets/images/rose.jpg');
-
+//new branch
 
 export default function App() {
   //Set state for selected image and app options
