@@ -26,19 +26,19 @@ export default function App() {
 
   const cameraRef = useRef(null);
 
-  const loadModelAsync = async () => {
-    const modelURL = 'https://storage.cloud.google.com/classify8/best_model.tflite';
-    try {
-      const model = await tf.loadTFLiteModelAsync({ modelUrl: modelURL });
-      setIsModelReady(true);
-    } catch (error) {
-      console.error('Error loading model:', error);
-    }
-  };
+  // const loadModelAsync = async () => {
+  //   const modelURL = 'https://storage.cloud.google.com/classify8/best_model.tflite';
+  //   try {
+  //     const model = await tf.loadTFLiteModelAsync({ modelUrl: modelURL });
+  //     setIsModelReady(true);
+  //   } catch (error) {
+  //     console.error('Error loading model:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    loadModelAsync();
-  }, []);
+  // useEffect(() => {
+  //   loadModelAsync();
+  // }, []);
 
 
 
