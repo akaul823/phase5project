@@ -8,9 +8,10 @@ import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
-import icon from "./assets/icon.png"
-import * as tf from '@tensorflow/tfjs';
-// import { load, loadTFLiteModel } from '@tensorflow/tfjs-react-native';
+import * as tf from '@tensorflow/tfjs-react-native';
+
+
+
 
 const PlaceholderImage = require('./assets/images/rose.jpg');
 //new branch
@@ -25,33 +26,21 @@ export default function App() {
 
   const cameraRef = useRef(null);
 
-  // useEffect(() => {
-  //   async function loadModel() {
-  //     try {
-  //       await load();
-  //       setIsModelReady(true);
-  //     } catch (error) {
-  //       console.error('Error loading TensorFlow model:', error);
-  //     }
-  //   }
+  const loadModelAsync = async () => {
+    const modelURL = 'https://storage.cloud.google.com/classify8/best_model.tflite';
+    try {
+      const model = await tf.loadTFLiteModelAsync({ modelUrl: modelURL });
+      setIsModelReady(true);
+    } catch (error) {
+      console.error('Error loading model:', error);
+    }
+  };
 
-  //   loadModel();
-  // }, []);
+  useEffect(() => {
+    loadModelAsync();
+  }, []);
 
-  
-  // const runInference = async () => {
-  //   if (!isModelReady) return;
 
-  //   // Load the TFLite model
-  //   const model = await loadTFLiteModel('assets/best_model.tflite');
-    
-  //   // Perform inference using the model
-  //   // Replace this with your actual inference code
-  //   const input = selectedImage; // Your input data
-  //   const output = model.predict(input);
-
-  //   console.log('Inference output:', output);
-  // };
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -73,11 +62,41 @@ export default function App() {
   const onReset = () => {
     setShowAppOptions(false);
   };
-  const onAddSticker = () => {
-    // we will implement this later
-    // this is where I add the classify model
-    alert("You have classified")
+
+  const onAddSticker = async () => {
+    if (isModelReady && selectedImage) {
+      try {
+        const image = await fetch(selectedImage);
+        const imageData = await image.arrayBuffer();
+        const inputTensor = tf.tensor(new Uint8Array(imageData));
+        const inputShape = [1, inputTensor.shape[0], inputTensor.shape[1], inputTensor.shape[2]];
+        const preprocessedInput = inputTensor.reshape(inputShape).div(255);
+
+        // Load and preprocess the model
+        const modelURL = 'https://storage.cloud.google.com/classify8/best_model.tflite';
+        const model = await tf.loadTFLiteModelAsync({ modelUrl: modelURL });
+
+        // Run inference
+        const output = model.predict(preprocessedInput);
+        const outputData = output.dataSync();
+        const maxIndex = outputData.indexOf(Math.max(...outputData));
+        const classNames = ["Class 1", "Class 2", "Class 3"]; // Replace with your class names
+        const classifiedLabel = classNames[maxIndex];
+
+        // Display the classified label
+        alert(`Classified as: ${classifiedLabel}`);
+
+        // Clean up
+        inputTensor.dispose();
+        preprocessedInput.dispose();
+        output.dispose();
+        model.dispose();
+      } catch (error) {
+        console.error('Error classifying image:', error);
+      }
+    }
   };
+  
   const onSaveImageAsync = async () => {
     // we will implement this later
   };
