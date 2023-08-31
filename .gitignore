@@ -36,3 +36,5 @@ yarn-error.*
 
 best_model.tflite
 best_model.tflite:Zone.Identifier
+
+best_model_new.onnx
