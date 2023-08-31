@@ -8,9 +8,10 @@ import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
-import icon from "./assets/icon.png"
-const PlaceholderImage = require('./assets/images/rose.jpg');
+import { InferenceSession } from "onnxruntime-react-native";
 
+const PlaceholderImage = require('./assets/images/rose.jpg');
+//new branch
 
 export default function App() {
   //Set state for selected image and app options
@@ -18,9 +19,23 @@ export default function App() {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [startCamera,setStartCamera] = useState(false)
   const [type, setType] = useState(CameraType.back); //
-  
+  const [ isModelReady, setIsModelReady] = useState(false)
+
   const cameraRef = useRef(null);
-  
+
+  const loadModelAsync = async () => {
+    const modelPath = "best_model_new.onnx"
+    try {
+      // load a model
+      const model = await InferenceSession.create(modelPath);
+      setIsModelReady(true);
+    } catch (error) {
+      console.error('Error loading onnx model!!:', error);
+    }
+  };
+
+
+
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -42,11 +57,32 @@ export default function App() {
   const onReset = () => {
     setShowAppOptions(false);
   };
-  const onAddSticker = () => {
-    // we will implement this later
-    // this is where I add the classify model
-    alert("You have classified")
+
+  const onAddSticker = async () => {
+    loadModelAsync()
+    if (isModelReady) {
+      try {
+        // Prepare the input data for inference based on your model's requirements
+        const input = selectedImage; // Prepare the input data based on the input nodes of your model
+  
+        // Run inference and get the results
+        const result = await model.run(input, ['num_detection:0', 'detection_classes:0']);
+  
+        // Process the inference results (e.g., get the number of detections and classes)
+        const numDetections = result['num_detection:0'];
+        const detectionClasses = result['detection_classes:0'];
+  
+        // Use the inference results for your intended functionality (e.g., displaying stickers)
+        alert(`Number of detections: ${numDetections}`);
+      } catch (error) {
+        console.error('Error during inference:', error);
+      }
+    } else {
+      console.warn('Model is not yet ready for inference.');
+    }
   };
+  
+  
   const onSaveImageAsync = async () => {
     // we will implement this later
   };
