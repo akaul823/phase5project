@@ -63,6 +63,7 @@ export default function App() {
     if (isModelReady) {
       try {
         // Prepare the input data for inference based on your model's requirements
+        // 
         const input = selectedImage; // Prepare the input data based on the input nodes of your model
   
         // Run inference and get the results
