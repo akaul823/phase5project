@@ -10,7 +10,10 @@ import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 // import { InferenceSession } from "onnxruntime-react-native";
 
-const PlaceholderImage = require('./assets/images/rose.jpg');
+// const PlaceholderImage = {uri: './assets/images/rose.jpg'}
+const PlaceholderImage = require('./assets/images/rose.jpg')
+console.log(`Here's my placeholder:`)
+console.log(PlaceholderImage)
 //new branch
 
 export default function App() {
@@ -58,29 +61,11 @@ export default function App() {
     setShowAppOptions(false);
   };
 
-  const onAddSticker = async () => {
-    // loadModelAsync()
-    fetch('http://127.0.0.1:5555/classify', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-       img: selectedImage,
-      }),
-    });
-    if(response.ok){
-      alert("You have classified")
-    }
-  };
-  
-  
   const onSaveImageAsync = async () => {
     // we will implement this later
   };
 
-  //change
+
   const openCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === 'granted') {
@@ -89,8 +74,7 @@ export default function App() {
       alert('Camera permission denied.');
     }
   };
-
-  //change
+  
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
@@ -100,11 +84,33 @@ export default function App() {
     }
   };
 
-  //change
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
+  const onAddSticker = async () => {
+
+    if(selectedImage != null){
+      const data = new FormData();
+      data.append('image', {
+        uri: selectedImage,
+      });
+      console.log(data)
+      fetch('http://127.0.0.1:5555/classify', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+        body: data,
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      // if(response.ok){
+      //   alert("You have classified")
+      // }
+    };
+    }
   //camera view change
   return (
     <View style={styles.container}>
@@ -132,7 +138,7 @@ export default function App() {
             </View>
 
           </Camera>
-        ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
+        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} />
       }
       </View>
       {showAppOptions ? (
@@ -150,7 +156,8 @@ export default function App() {
             pickImageAsync()}} />
           <Button label="Use this photo" onPress={() => {
             setStartCamera(false)
-            setShowAppOptions(true)}} />
+            setShowAppOptions(true)
+           }} />
           <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
