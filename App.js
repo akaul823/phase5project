@@ -8,7 +8,7 @@ import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
-import { InferenceSession } from "onnxruntime-react-native";
+// import { InferenceSession } from "onnxruntime-react-native";
 
 const PlaceholderImage = require('./assets/images/rose.jpg');
 //new branch
@@ -23,16 +23,16 @@ export default function App() {
 
   const cameraRef = useRef(null);
 
-  const loadModelAsync = async () => {
-    const modelPath = "best_model_new.onnx"
-    try {
-      // load a model
-      const model = await InferenceSession.create(modelPath);
-      setIsModelReady(true);
-    } catch (error) {
-      console.error('Error loading onnx model!!:', error);
-    }
-  };
+  // const loadModelAsync = async () => {
+  //   const modelPath = "best_model_new.onnx"
+  //   try {
+  //     // load a model
+  //     const model = await InferenceSession.create(modelPath);
+  //     setIsModelReady(true);
+  //   } catch (error) {
+  //     console.error('Error loading onnx model!!:', error);
+  //   }
+  // };
 
 
 
@@ -59,27 +59,19 @@ export default function App() {
   };
 
   const onAddSticker = async () => {
-    loadModelAsync()
-    if (isModelReady) {
-      try {
-        // Prepare the input data for inference based on your model's requirements
-        // 
-        const input = selectedImage; // Prepare the input data based on the input nodes of your model
-  
-        // Run inference and get the results
-        const result = await model.run(input, ['num_detection:0', 'detection_classes:0']);
-  
-        // Process the inference results (e.g., get the number of detections and classes)
-        const numDetections = result['num_detection:0'];
-        const detectionClasses = result['detection_classes:0'];
-  
-        // Use the inference results for your intended functionality (e.g., displaying stickers)
-        alert(`Number of detections: ${numDetections}`);
-      } catch (error) {
-        console.error('Error during inference:', error);
-      }
-    } else {
-      console.warn('Model is not yet ready for inference.');
+    // loadModelAsync()
+    fetch('http://127.0.0.1:5555/classify', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+       img: selectedImage,
+      }),
+    });
+    if(response.ok){
+      alert("You have classified")
     }
   };
   
