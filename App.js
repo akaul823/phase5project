@@ -127,7 +127,7 @@ export default function App() {
         uri: selectedImage,
       });
       console.log(data)
-      // wifi ip address. 127.0.1 was bad request too
+      // wifi ip address. http://127.0.0.1:5555 was bad request too
       fetch('http://192.168.1.175:5555/classify', {
         method: 'POST',
         headers: {
