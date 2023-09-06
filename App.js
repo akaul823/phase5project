@@ -25,20 +25,15 @@ export default function App() {
   const [ isModelReady, setIsModelReady] = useState(false)
 
   const cameraRef = useRef(null);
-
-  // const loadModelAsync = async () => {
-  //   const modelPath = "best_model_new.onnx"
-  //   try {
-  //     // load a model
-  //     const model = await InferenceSession.create(modelPath);
-  //     setIsModelReady(true);
-  //   } catch (error) {
-  //     console.error('Error loading onnx model!!:', error);
-  //   }
-  // };
-
-
-
+  const convertBase64ToBlob = (base64, contentType) => {
+    const byteCharacters = atob(base64.split(',')[1]);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: contentType });
+  };
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -89,28 +84,61 @@ export default function App() {
   }
 
   const onAddSticker = async () => {
+    if (selectedImage) {
+      const formData = new FormData();
+      const blob = convertBase64ToBlob(selectedImage, 'image/jpeg');
+      formData.append('image', blob, 'image.jpg');
 
-    if(selectedImage != null){
-      const data = new FormData();
-      data.append('image', {
-        uri: selectedImage,
-      });
-      console.log(data)
-      fetch('http://127.0.0.1:5555/classify', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
-        body: data,
-      })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      // if(response.ok){
-      //   alert("You have classified")
-      // }
-    };
+      try {
+        console.log(formData)
+        console.log(selectedImage)
+        console.log(blob)
+        const response = await fetch('http://127.0.0.1:5555/classify', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Predicted Label:', data.predicted_label);
+          console.log('Confidence Score:', data.confidence_score);
+        } else {
+          console.error('Classification failed.');
+        }
+      } catch (error) {
+        console.error('Error classifying image:', error);
+      }
     }
+  };
+  
+
+  // const onAddSticker = async () => {
+
+  //   if(selectedImage != null){
+  //     const data = new FormData();
+  //     data.append('image', {
+  //       uri: selectedImage,
+  //     });
+  //     console.log(data)
+  //     fetch('http://127.0.0.1:5555/classify', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //       body: data,
+  //     })
+  //     .then(response => response.json())
+  //     .then(data => console.log(data))
+  //     // if(response.ok){
+  //     //   alert("You have classified")
+  //     // }
+  //   };
+  //   }
   //camera view change
   return (
     <View style={styles.container}>
