@@ -105,28 +105,7 @@ export default function App() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
-  // const onAddSticker = async () => {
-  //   if (selectedImage) {
-  //     console.log('Selected image before conversion:', selectedImage.slice(0, 100));
-  //     const formData = new FormData();
-  //     console.log(formData)
-  //     // const blob = convertBase64ToBlob(selectedImage, 'image/jpeg');
-      
-  //     formData.append('image', selectedImage);
-
-  //     try {
-  //       console.log(formData)
-  //       console.log(selectedImage)
-  //       // console.log(blob)
-  //       const response = await fetch('http://127.0.0.1:5555/classify', {
-  //         method: 'POST',
-  //         body: formData,
-  //         headers: {
-  //           'Accept': 'application/json',
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
+ 
   //       if (response.ok) {
   //         const data = await response.json();
   //         console.log('Predicted Label:', data.predicted_label);
@@ -148,7 +127,8 @@ export default function App() {
         uri: selectedImage,
       });
       console.log(data)
-      fetch('http://127.0.0.1:5555/classify', {
+      // wifi ip address. 127.0.1 was bad request too
+      fetch('http://192.168.1.175:5555/classify', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
