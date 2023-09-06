@@ -8,6 +8,7 @@ import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
+import { encode, decode } from 'base-64';
 // import { InferenceSession } from "onnxruntime-react-native";
 
 // const PlaceholderImage = {uri: './assets/images/rose.jpg'}
@@ -25,13 +26,15 @@ export default function App() {
   const [ isModelReady, setIsModelReady] = useState(false)
 
   const cameraRef = useRef(null);
+
   const convertBase64ToBlob = (base64, contentType) => {
-    const byteCharacters = atob(base64.split(',')[1]);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    const binary = decode(base64);
+    const byteArray = new Uint8Array(binary.length);
+  
+    for (let i = 0; i < binary.length; i++) {
+      byteArray[i] = binary.charCodeAt(i);
     }
-    const byteArray = new Uint8Array(byteNumbers);
+  
     return new Blob([byteArray], { type: contentType });
   };
 
@@ -85,6 +88,7 @@ export default function App() {
 
   const onAddSticker = async () => {
     if (selectedImage) {
+      console.log('Selected image before conversion:', selectedImage);
       const formData = new FormData();
       const blob = convertBase64ToBlob(selectedImage, 'image/jpeg');
       formData.append('image', blob, 'image.jpg');
