@@ -10,7 +10,8 @@ import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import { encode, decode } from 'base-64';
 import * as FileSystem from 'expo-file-system';
-// import { InferenceSession } from "onnxruntime-react-native";
+import axios from 'axios';
+
 
 // const PlaceholderImage = {uri: './assets/images/rose.jpg'}
 const PlaceholderImage = require('./assets/images/rose.jpg')
@@ -33,7 +34,7 @@ export default function App() {
       const base64 = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-      console.log(base64.slice(0, 10))
+      // console.log(base64.slice(0, 10))
       // return `data:image/jpeg;base64,${base64}`;
       return base64
     } catch (error) {
@@ -58,12 +59,17 @@ export default function App() {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
+      base64: true
     });
+
     //Ensure a picture is selected and set the current state to that picture
     if (!result.canceled) {
+
       const localUri = result.assets[0].uri
-      const base64Image = await imageToBase64(localUri)
-      setSelectedImage(base64Image);
+
+      // const base64Image = await imageToBase64(localUri)
+      setSelectedImage(localUri);
+      console.log("Local URI: " + selectedImage)
       setShowAppOptions(true);
     } else {
       while(!setSelectedImage){
@@ -124,27 +130,26 @@ export default function App() {
   const onAddSticker = async () => {
 
     if(selectedImage != null){
-      const data = new FormData();
-      data.append('image', {
+      const base64Img = imageToBase64(selectedImage)
+      const imgData = new FormData();
+      imgData.append('image', {
         uri: selectedImage,
       });
-      console.log(data)
+      // console.log(data)
       // FileSystem.uploadAsync()
-      // let response = await FS.uploadAsync(url, mediaFile.uri, {
-      //   headers: {
-      //     "content-type": content_type,
-      //   },
-      //   httpMethod: "POST",
-      //   uploadType: FS.FileSystemUploadType.BINARY_CONTENT,
-      // });
-      // wifi ip address. http://127.0.0.1:5555 was bad request too
-      fetch('http://172.22.83.5:5555', {
+
+ 
+
+      // wifi ip address http://172.22.83.5:5555. http://127.0.0.1:5555 was bad request too
+      // Flatiron ip: http://172.20.58.250:5555
+      console.log(imgData)
+      fetch('http://172.20.58.250:5555/classify', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'multipart/form-data',
         },
-        body: data,
+        body: imgData,
       })
       .then(response => response.json())
       .then(data => console.log(data))
@@ -152,7 +157,9 @@ export default function App() {
       //   alert("You have classified")
       // }
     };
-    }
+     }
+
+
   //camera view change
   return (
     <View style={styles.container}>
