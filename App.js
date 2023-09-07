@@ -11,6 +11,15 @@ import * as Permissions from 'expo-permissions';
 import { encode, decode } from 'base-64';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
+// https://www.youtube.com/watch?v=pBEYprNAs4c Uploading using expo file system
+
+const imgDir = FileSystem.documentDirectory + 'images';
+const ensureDirExists = async()=>{
+  const dirInfo = await FileSystem.getInfoAsync(imgDir);
+  if (!dirInfo.exists){
+    await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true})
+  }
+}
 
 
 // const PlaceholderImage = {uri: './assets/images/rose.jpg'}
@@ -26,6 +35,7 @@ export default function App() {
   const [startCamera,setStartCamera] = useState(false)
   const [type, setType] = useState(CameraType.back); //
   const [ isModelReady, setIsModelReady] = useState(false)
+  const [imgObj, setImgObj] = useState(null);
 
   const cameraRef = useRef(null);
 
@@ -65,11 +75,15 @@ export default function App() {
     //Ensure a picture is selected and set the current state to that picture
     if (!result.canceled) {
 
-      const localUri = result.assets[0].uri
+      const img = result.assets[0]
+  
 
       // const base64Image = await imageToBase64(localUri)
-      setSelectedImage(localUri);
-      console.log("Local URI: " + selectedImage)
+      setSelectedImage(img.uri);
+      setImgObj(img)
+      console.log("Local URI: " + img.uri)
+      console.log("File Name: " + result.assets[0].fileName)
+      console.log("img" + imgObj)
       setShowAppOptions(true);
     } else {
       while(!setSelectedImage){
@@ -130,11 +144,9 @@ export default function App() {
   const onAddSticker = async () => {
 
     if(selectedImage != null){
-      const base64Img = imageToBase64(selectedImage)
+      // const base64Img = imageToBase64(selectedImage)
       const imgData = new FormData();
-      imgData.append('image', {
-        uri: selectedImage,
-      });
+      imgData.append('image', imgObj);
       // console.log(data)
       // FileSystem.uploadAsync()
 
