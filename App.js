@@ -33,7 +33,9 @@ export default function App() {
       const base64 = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-      return `data:image/jpeg;base64,${base64}`;
+      console.log(base64.slice(0, 10))
+      // return `data:image/jpeg;base64,${base64}`;
+      return base64
     } catch (error) {
       console.error('Error converting image to base64:', error);
       return null;
@@ -128,6 +130,13 @@ export default function App() {
       });
       console.log(data)
       // FileSystem.uploadAsync()
+      // let response = await FS.uploadAsync(url, mediaFile.uri, {
+      //   headers: {
+      //     "content-type": content_type,
+      //   },
+      //   httpMethod: "POST",
+      //   uploadType: FS.FileSystemUploadType.BINARY_CONTENT,
+      // });
       // wifi ip address. http://127.0.0.1:5555 was bad request too
       fetch('http://172.22.83.5:5555', {
         method: 'POST',
