@@ -40,16 +40,16 @@ export default function App() {
     }
   };
 
-  const convertBase64ToBlob = (base64, contentType) => {
-    const binary = decode(base64);
-    const byteArray = new Uint8Array(binary.length);
+  // const convertBase64ToBlob = (base64, contentType) => {
+  //   const binary = decode(base64);
+  //   const byteArray = new Uint8Array(binary.length);
   
-    for (let i = 0; i < binary.length; i++) {
-      byteArray[i] = binary.charCodeAt(i);
-    }
+  //   for (let i = 0; i < binary.length; i++) {
+  //     byteArray[i] = binary.charCodeAt(i);
+  //   }
   
-    return new Blob([byteArray], { type: contentType });
-  };
+  //   return new Blob([byteArray], { type: contentType });
+  // };
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -127,8 +127,9 @@ export default function App() {
         uri: selectedImage,
       });
       console.log(data)
+      // FileSystem.uploadAsync()
       // wifi ip address. http://127.0.0.1:5555 was bad request too
-      fetch('http://192.168.1.175:5555/classify', {
+      fetch('http://172.22.83.5:5555', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
