@@ -63,10 +63,36 @@ export default function App() {
   
   //   return new Blob([byteArray], { type: contentType });
   // };
+  // const uploadImage = async (uri) => {
+  //   let formData = new FormData();
+  //   formData.append('image', {
+  //     uri,
+  //     name: 'image.jpg',
+  //     type: 'image/jpeg',
+  //   });
+
+  //   try {
+  //     let response = await fetch('http://your-flask-server-endpoint.com/upload', {
+  //       method: 'POST',
+  //       body: formData,
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     });
+
+  //     let jsonResponse = await response.json();
+
+  //     // Handle the server's response
+  //     console.log(jsonResponse);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
       base64: true
@@ -83,7 +109,7 @@ export default function App() {
       setImgObj(img)
       console.log("Local URI: " + img.uri)
       console.log("File Name: " + result.assets[0].fileName)
-      console.log("img" + imgObj)
+      console.log("img: " + imgObj)
       setShowAppOptions(true);
     } else {
       while(!setSelectedImage){
@@ -155,7 +181,7 @@ export default function App() {
       // wifi ip address http://172.22.83.5:5555. http://127.0.0.1:5555 was bad request too
       // Flatiron ip: http://172.20.58.250:5555
       console.log(imgData)
-      fetch('http://172.20.58.250:5555/classify', {
+      fetch('http://172.23.48.135:5555/classify', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
