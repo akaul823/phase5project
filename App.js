@@ -21,12 +21,10 @@ const ensureDirExists = async()=>{
   }
 }
 
-
 // const PlaceholderImage = {uri: './assets/images/rose.jpg'}
 const PlaceholderImage = require('./assets/images/rose.jpg')
 console.log(`Here's my placeholder:`)
 console.log(PlaceholderImage)
-//new branch
 
 export default function App() {
   //Set state for selected image and app options
@@ -36,9 +34,9 @@ export default function App() {
   const [type, setType] = useState(CameraType.back); //
   const [ isModelReady, setIsModelReady] = useState(false)
   const [imgObj, setImgObj] = useState(null);
-
   const cameraRef = useRef(null);
 
+  // Converting an image to base 64 using Expo File System
   const imageToBase64 = async (uri) => {
     try {
       const base64 = await FileSystem.readAsStringAsync(uri, {
@@ -53,6 +51,7 @@ export default function App() {
     }
   };
 
+  // Concerting base64 encoded image as BLOB
   // const convertBase64ToBlob = (base64, contentType) => {
   //   const binary = decode(base64);
   //   const byteArray = new Uint8Array(binary.length);
@@ -110,8 +109,10 @@ export default function App() {
       console.log("Local URI: " + img.uri)
       console.log("File Name: " + result.assets[0].fileName)
       console.log("img: " + imgObj)
+      // setImgObj(img)
       setShowAppOptions(true);
-    } else {
+    } 
+    else {
       while(!setSelectedImage){
         alert('You did not select any image.');
       }
@@ -176,12 +177,11 @@ export default function App() {
       // console.log(data)
       // FileSystem.uploadAsync()
 
- 
-
       // wifi ip address http://172.22.83.5:5555. http://127.0.0.1:5555 was bad request too
       // Flatiron ip: http://172.20.58.250:5555
-      console.log(imgData)
-      fetch('http://172.23.48.135:5555/classify', {
+      let ipAdd = ""
+      console.log("Data: " + imgData)
+      fetch('http://172.26.132.234:5555/classify', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
