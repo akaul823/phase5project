@@ -10,16 +10,16 @@ import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import { encode, decode } from 'base-64';
 import * as FileSystem from 'expo-file-system';
-import axios from 'axios';
+
 // https://www.youtube.com/watch?v=pBEYprNAs4c Uploading using expo file system
 
-const imgDir = FileSystem.documentDirectory + 'images';
-const ensureDirExists = async()=>{
-  const dirInfo = await FileSystem.getInfoAsync(imgDir);
-  if (!dirInfo.exists){
-    await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true})
-  }
-}
+// const imgDir = FileSystem.documentDirectory + 'images';
+// const ensureDirExists = async()=>{
+//   const dirInfo = await FileSystem.getInfoAsync(imgDir);
+//   if (!dirInfo.exists){
+//     await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true})
+//   }
+// }
 
 // const PlaceholderImage = {uri: './assets/images/rose.jpg'}
 const PlaceholderImage = require('./assets/images/rose.jpg')
@@ -37,19 +37,19 @@ export default function App() {
   const cameraRef = useRef(null);
 
   // Converting an image to base 64 using Expo File System
-  const imageToBase64 = async (uri) => {
-    try {
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      // console.log(base64.slice(0, 10))
-      // return `data:image/jpeg;base64,${base64}`;
-      return base64
-    } catch (error) {
-      console.error('Error converting image to base64:', error);
-      return null;
-    }
-  };
+  // const imageToBase64 = async (uri) => {
+  //   try {
+  //     const base64 = await FileSystem.readAsStringAsync(uri, {
+  //       encoding: FileSystem.EncodingType.Base64,
+  //     });
+  //     // console.log(base64.slice(0, 10))
+  //     // return `data:image/jpeg;base64,${base64}`;
+  //     return base64
+  //   } catch (error) {
+  //     console.error('Error converting image to base64:', error);
+  //     return null;
+  //   }
+  // };
 
   // Concerting base64 encoded image as BLOB
   // const convertBase64ToBlob = (base64, contentType) => {
@@ -62,31 +62,7 @@ export default function App() {
   
   //   return new Blob([byteArray], { type: contentType });
   // };
-  // const uploadImage = async (uri) => {
-  //   let formData = new FormData();
-  //   formData.append('image', {
-  //     uri,
-  //     name: 'image.jpg',
-  //     type: 'image/jpeg',
-  //   });
 
-  //   try {
-  //     let response = await fetch('http://your-flask-server-endpoint.com/upload', {
-  //       method: 'POST',
-  //       body: formData,
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //     });
-
-  //     let jsonResponse = await response.json();
-
-  //     // Handle the server's response
-  //     console.log(jsonResponse);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -108,7 +84,7 @@ export default function App() {
       setImgObj(img)
       console.log("Local URI: " + img.uri)
       console.log("File Name: " + result.assets[0].fileName)
-      console.log("img: " + imgObj)
+      console.log("img: " + img)
       // setImgObj(img)
       setShowAppOptions(true);
     } 
@@ -174,14 +150,11 @@ export default function App() {
       // const base64Img = imageToBase64(selectedImage)
       const imgData = new FormData();
       imgData.append('image', imgObj);
-      // console.log(data)
-      // FileSystem.uploadAsync()
+      console.log(imgData)
 
-      // wifi ip address http://172.22.83.5:5555. http://127.0.0.1:5555 was bad request too
-      // Flatiron ip: http://172.20.58.250:5555
-      let ipAdd = ""
-      console.log("Data: " + imgData)
-      fetch('http://172.26.132.234:5555/classify', {
+      console.log(imgData)
+      // I changed to port 8000. URL is dependnent on NGROK forwarding URL
+      fetch('https://1b1c-69-114-91-11.ngrok-free.app/classify', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -189,8 +162,9 @@ export default function App() {
         },
         body: imgData,
       })
-      .then(response => response.json())
-      .then(data => console.log(data))
+      .then(console.log("Success!"))
+      // .then(response => response.json())
+      // .then(data => console.log(data))
       // if(response.ok){
       //   alert("You have classified")
       // }
