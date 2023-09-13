@@ -149,20 +149,25 @@ export default function App() {
     if(selectedImage != null){
       // const base64Img = imageToBase64(selectedImage)
       const imgData = new FormData();
-      imgData.append('image', imgObj);
+      imgData.append('image', {
+        uri: imgObj.uri,
+        type: imgObj.type,
+        name: imgObj.fileName
+      });
       console.log(imgData)
 
       console.log(imgData)
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
-      fetch('https://1b1c-69-114-91-11.ngrok-free.app/classify', {
+      fetch('https://c03c-69-114-91-11.ngrok-free.app/classify', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
+        // headers: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+        // },
         body: imgData,
       })
-      .then(console.log("Success!"))
+      .then(res=>res.json())
+      .then(data=>alert(`This is a ${data["flowerName"]}`))
       // .then(response => response.json())
       // .then(data => console.log(data))
       // if(response.ok){
