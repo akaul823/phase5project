@@ -8,10 +8,23 @@ import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
-import { InferenceSession } from "onnxruntime-react-native";
+import { encode, decode } from 'base-64';
+import * as FileSystem from 'expo-file-system';
 
-const PlaceholderImage = require('./assets/images/rose.jpg');
-//new branch
+// https://www.youtube.com/watch?v=pBEYprNAs4c Uploading using expo file system
+
+// const imgDir = FileSystem.documentDirectory + 'images';
+// const ensureDirExists = async()=>{
+//   const dirInfo = await FileSystem.getInfoAsync(imgDir);
+//   if (!dirInfo.exists){
+//     await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true})
+//   }
+// }
+
+// const PlaceholderImage = {uri: './assets/images/rose.jpg'}
+const PlaceholderImage = require('./assets/images/rose.jpg')
+console.log(`Here's my placeholder:`)
+console.log(PlaceholderImage)
 
 export default function App() {
   //Set state for selected image and app options
@@ -20,74 +33,81 @@ export default function App() {
   const [startCamera,setStartCamera] = useState(false)
   const [type, setType] = useState(CameraType.back); //
   const [ isModelReady, setIsModelReady] = useState(false)
-
+  const [imgObj, setImgObj] = useState(null);
   const cameraRef = useRef(null);
 
-  const loadModelAsync = async () => {
-    const modelPath = "best_model_new.onnx"
-    try {
-      // load a model
-      const model = await InferenceSession.create(modelPath);
-      setIsModelReady(true);
-    } catch (error) {
-      console.error('Error loading onnx model!!:', error);
-    }
-  };
+  // Converting an image to base 64 using Expo File System
+  // const imageToBase64 = async (uri) => {
+  //   try {
+  //     const base64 = await FileSystem.readAsStringAsync(uri, {
+  //       encoding: FileSystem.EncodingType.Base64,
+  //     });
+  //     // console.log(base64.slice(0, 10))
+  //     // return `data:image/jpeg;base64,${base64}`;
+  //     return base64
+  //   } catch (error) {
+  //     console.error('Error converting image to base64:', error);
+  //     return null;
+  //   }
+  // };
 
-
+  // Concerting base64 encoded image as BLOB
+  // const convertBase64ToBlob = (base64, contentType) => {
+  //   const binary = decode(base64);
+  //   const byteArray = new Uint8Array(binary.length);
+  
+  //   for (let i = 0; i < binary.length; i++) {
+  //     byteArray[i] = binary.charCodeAt(i);
+  //   }
+  
+  //   return new Blob([byteArray], { type: contentType });
+  // };
 
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
+      base64: true
     });
+
     //Ensure a picture is selected and set the current state to that picture
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+
+      const img = result.assets[0]
+  
+
+      // const base64Image = await imageToBase64(localUri)
+      setSelectedImage(img.uri);
+      setImgObj(img)
+      console.log("Local URI: " + img.uri)
+      console.log("File Name: " + result.assets[0].fileName)
+      console.log("img: " + img)
+      // setImgObj(img)
       setShowAppOptions(true);
-    } else {
+    } 
+    else {
       while(!setSelectedImage){
         alert('You did not select any image.');
       }
     }
   };
+  // Function to pick an image based on the platform
+
+
+
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
   };
 
-  const onAddSticker = async () => {
-    loadModelAsync()
-    if (isModelReady) {
-      try {
-        // Prepare the input data for inference based on your model's requirements
-        const input = selectedImage; // Prepare the input data based on the input nodes of your model
-  
-        // Run inference and get the results
-        const result = await model.run(input, ['num_detection:0', 'detection_classes:0']);
-  
-        // Process the inference results (e.g., get the number of detections and classes)
-        const numDetections = result['num_detection:0'];
-        const detectionClasses = result['detection_classes:0'];
-  
-        // Use the inference results for your intended functionality (e.g., displaying stickers)
-        alert(`Number of detections: ${numDetections}`);
-      } catch (error) {
-        console.error('Error during inference:', error);
-      }
-    } else {
-      console.warn('Model is not yet ready for inference.');
-    }
-  };
-  
-  
   const onSaveImageAsync = async () => {
     // we will implement this later
   };
 
-  //change
+
   const openCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === 'granted') {
@@ -96,8 +116,7 @@ export default function App() {
       alert('Camera permission denied.');
     }
   };
-
-  //change
+  
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
@@ -107,10 +126,56 @@ export default function App() {
     }
   };
 
-  //change
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
+
+ 
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         console.log('Predicted Label:', data.predicted_label);
+  //         console.log('Confidence Score:', data.confidence_score);
+  //       } else {
+  //         console.error('Classification failed.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error classifying image:', error);
+  //     }
+  //   }
+  // };
+  
+  const onAddSticker = async () => {
+
+    if(selectedImage != null){
+      // const base64Img = imageToBase64(selectedImage)
+      const imgData = new FormData();
+      imgData.append('image', {
+        uri: imgObj.uri,
+        type: imgObj.type,
+        name: imgObj.fileName
+      });
+      console.log(imgData)
+
+      console.log(imgData)
+      // I changed to port 8000. URL is dependnent on NGROK forwarding URL
+      fetch('https://c03c-69-114-91-11.ngrok-free.app/classify', {
+        method: 'POST',
+        // headers: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+        // },
+        body: imgData,
+      })
+      .then(res=>res.json())
+      .then(data=>alert(`This is a ${data["flowerName"]}`))
+      // .then(response => response.json())
+      // .then(data => console.log(data))
+      // if(response.ok){
+      //   alert("You have classified")
+      // }
+    };
+     }
+
 
   //camera view change
   return (
@@ -139,7 +204,7 @@ export default function App() {
             </View>
 
           </Camera>
-        ) : <ImageViewer placeholderImageSource={PlaceholderImage} selectedImage={selectedImage} />
+        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} />
       }
       </View>
       {showAppOptions ? (
@@ -157,7 +222,8 @@ export default function App() {
             pickImageAsync()}} />
           <Button label="Use this photo" onPress={() => {
             setStartCamera(false)
-            setShowAppOptions(true)}} />
+            setShowAppOptions(true)
+           }} />
           <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
