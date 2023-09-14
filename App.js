@@ -34,6 +34,7 @@ export default function App() {
   const [type, setType] = useState(CameraType.back); //
   const [ isModelReady, setIsModelReady] = useState(false)
   const [imgObj, setImgObj] = useState(null);
+  const [flowerInfo, setFlowerInfo]  = useState("")
   const cameraRef = useRef(null);
 
   // Converting an image to base 64 using Expo File System
@@ -120,6 +121,8 @@ export default function App() {
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
+      // photo.assets[0]?
+      setImgObj(photo)
       setSelectedImage(photo.uri); // Update the selected image with the URI of the captured photo
       setStartCamera(false); // Turn off the camera view after taking the picture
       setShowAppOptions(true);
@@ -130,20 +133,6 @@ export default function App() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
- 
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         console.log('Predicted Label:', data.predicted_label);
-  //         console.log('Confidence Score:', data.confidence_score);
-  //       } else {
-  //         console.error('Classification failed.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error classifying image:', error);
-  //     }
-  //   }
-  // };
-  
   const onAddSticker = async () => {
 
     if(selectedImage != null){
@@ -156,9 +145,8 @@ export default function App() {
       });
       console.log(imgData)
 
-      console.log(imgData)
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
-      fetch('https://c03c-69-114-91-11.ngrok-free.app/classify', {
+      fetch('https://0b0e-71-190-177-64.ngrok-free.app/classify', {
         method: 'POST',
         // headers: {
         //   'Accept': 'application/json',
@@ -167,12 +155,11 @@ export default function App() {
         body: imgData,
       })
       .then(res=>res.json())
-      .then(data=>alert(`This is a ${data["flowerName"]}`))
-      // .then(response => response.json())
-      // .then(data => console.log(data))
-      // if(response.ok){
-      //   alert("You have classified")
-      // }
+      .then(data=>{
+        alert(`This is a ${data["flowerName"]}`)
+        // setFlowerInfo(data["flowerName"])
+        // console.log(flowerInfo)
+      })
     };
      }
 
@@ -220,10 +207,10 @@ export default function App() {
           <Button theme="primary" label="Choose a photo" onPress={()=>{
             setStartCamera(false)
             pickImageAsync()}} />
-          <Button label="Use this photo" onPress={() => {
+          {/* <Button label="Use this photo" onPress={() => {
             setStartCamera(false)
             setShowAppOptions(true)
-           }} />
+           }} /> */}
           <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
@@ -248,7 +235,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   footerContainer: {
-    flex: 1 / 2,
+    flex: 1/3,
     alignItems: 'center',
   },
   optionsContainer: {
