@@ -7,21 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
-import * as Permissions from 'expo-permissions';
-import { encode, decode } from 'base-64';
-import * as FileSystem from 'expo-file-system';
 
-// https://www.youtube.com/watch?v=pBEYprNAs4c Uploading using expo file system
 
-// const imgDir = FileSystem.documentDirectory + 'images';
-// const ensureDirExists = async()=>{
-//   const dirInfo = await FileSystem.getInfoAsync(imgDir);
-//   if (!dirInfo.exists){
-//     await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true})
-//   }
-// }
-
-// const PlaceholderImage = {uri: './assets/images/rose.jpg'}
 const PlaceholderImage = require('./assets/images/rose.jpg')
 console.log(`Here's my placeholder:`)
 console.log(PlaceholderImage)
@@ -34,35 +21,8 @@ export default function App() {
   const [type, setType] = useState(CameraType.back); //
   const [ isModelReady, setIsModelReady] = useState(false)
   const [imgObj, setImgObj] = useState(null);
+  const [flowerInfo, setFlowerInfo]  = useState("")
   const cameraRef = useRef(null);
-
-  // Converting an image to base 64 using Expo File System
-  // const imageToBase64 = async (uri) => {
-  //   try {
-  //     const base64 = await FileSystem.readAsStringAsync(uri, {
-  //       encoding: FileSystem.EncodingType.Base64,
-  //     });
-  //     // console.log(base64.slice(0, 10))
-  //     // return `data:image/jpeg;base64,${base64}`;
-  //     return base64
-  //   } catch (error) {
-  //     console.error('Error converting image to base64:', error);
-  //     return null;
-  //   }
-  // };
-
-  // Concerting base64 encoded image as BLOB
-  // const convertBase64ToBlob = (base64, contentType) => {
-  //   const binary = decode(base64);
-  //   const byteArray = new Uint8Array(binary.length);
-  
-  //   for (let i = 0; i < binary.length; i++) {
-  //     byteArray[i] = binary.charCodeAt(i);
-  //   }
-  
-  //   return new Blob([byteArray], { type: contentType });
-  // };
-
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -101,6 +61,7 @@ export default function App() {
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
+    setSelectedImage(!selectedImage)
   };
 
   const onSaveImageAsync = async () => {
@@ -120,6 +81,8 @@ export default function App() {
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
+      console.log(photo)
+      setImgObj(photo)
       setSelectedImage(photo.uri); // Update the selected image with the URI of the captured photo
       setStartCamera(false); // Turn off the camera view after taking the picture
       setShowAppOptions(true);
@@ -130,35 +93,23 @@ export default function App() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
- 
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         console.log('Predicted Label:', data.predicted_label);
-  //         console.log('Confidence Score:', data.confidence_score);
-  //       } else {
-  //         console.error('Classification failed.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error classifying image:', error);
-  //     }
-  //   }
-  // };
-  
   const onAddSticker = async () => {
 
     if(selectedImage != null){
-      // const base64Img = imageToBase64(selectedImage)
+      setIsModelReady(true)
       const imgData = new FormData();
-      imgData.append('image', {
+      imgObj.type ? (imgData.append('image', {
         uri: imgObj.uri,
         type: imgObj.type,
         name: imgObj.fileName
-      });
-      console.log(imgData)
+      })) : (imgData.append('image', {
+        uri: imgObj.uri,
+        type: ".jpg",
+        name: "image"
+      }))
 
-      console.log(imgData)
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
-      fetch('https://c03c-69-114-91-11.ngrok-free.app/classify', {
+      fetch('https://cff7-69-114-91-11.ngrok-free.app/classify', {
         method: 'POST',
         // headers: {
         //   'Accept': 'application/json',
@@ -167,13 +118,16 @@ export default function App() {
         body: imgData,
       })
       .then(res=>res.json())
-      .then(data=>alert(`This is a ${data["flowerName"]}`))
-      // .then(response => response.json())
-      // .then(data => console.log(data))
-      // if(response.ok){
-      //   alert("You have classified")
-      // }
+      .then(data=>{getName(data)
+        setIsModelReady(false)
+
+      })
     };
+     }
+     function getName(data){
+      let name = data["flowerName"]
+      setFlowerInfo(name)
+      // alert(`This is a ${name}`)
      }
 
 
@@ -185,13 +139,13 @@ export default function App() {
           <Camera style={styles.camera} type={type} ref={cameraRef}>
             <View style={styles.flipCam}>
               <TouchableOpacity onPress={toggleCameraType}>
-                <Text style={styles.text}>Flip</Text>
+                <Text style={styles.flipCam}>Flip</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.takePic}>
               <TouchableOpacity onPress={takePictureAsync}>
-              <Text style={styles.text}>Take Picture</Text>
+              <Text style={styles.text}> Take Picture</Text>
             </TouchableOpacity>
             </View>
 
@@ -199,31 +153,30 @@ export default function App() {
               <TouchableOpacity onPress={()=>{
             setStartCamera(false)
             }}>
-                <Text style={styles.text}>X</Text>
+                <Text style={styles.closeButton}>X</Text>
               </TouchableOpacity>
             </View>
 
           </Camera>
-        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} />
+        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} flowerInfo={flowerInfo} isModelReady={isModelReady} />
       }
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
         <View style={styles.optionsRow}>
           <IconButton icon="refresh" label="Reset" onPress={onReset} />
-          <CircleButton onPress={onAddSticker} />
+          <CircleButton onPress={(e)=>{
+            onAddSticker(e)
+            }} />
           <IconButton icon="save-alt" label="Save" onPress={onSaveImageAsync} />
         </View>
       </View>
       ) : (
         <View style={styles.footerContainer}>
+
           <Button theme="primary" label="Choose a photo" onPress={()=>{
             setStartCamera(false)
             pickImageAsync()}} />
-          <Button label="Use this photo" onPress={() => {
-            setStartCamera(false)
-            setShowAppOptions(true)
-           }} />
           <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
@@ -237,10 +190,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#25292e',
     alignItems: 'center',
+    
   },
   imageContainer: {
     flex: 1,
     paddingTop: 58,
+    
   },
   image: {
     width: 320,
@@ -248,12 +203,19 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   footerContainer: {
-    flex: 1 / 2,
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center'
   },
   optionsContainer: {
     position: 'absolute',
     bottom: 80,
+  },
+  appName: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 20, // You can adjust the margin as needed
   },
   optionsRow: {
     alignItems: 'center',
@@ -269,16 +231,30 @@ const styles = StyleSheet.create({
     bottom: -40,
   },
   flipCam:{
-    bottom: 290
+    bottom: -70,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'white',
+    right: -5,
   },
   button: {
     flex: 1,
     alignSelf: 'flex-end',
     alignItems: 'center',
   },
+  closeButton: {
+    position: 'absolute',
+    top: -39,
+    right: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+    
   },
  });
+
