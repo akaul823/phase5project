@@ -62,6 +62,7 @@ export default function App() {
   const onReset = () => {
     setShowAppOptions(false);
     setSelectedImage(!selectedImage)
+    // setFlowerInfo(!flowerInfo)
   };
 
   const onSaveImageAsync = async () => {
