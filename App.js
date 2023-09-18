@@ -122,6 +122,7 @@ export default function App() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       // photo.assets[0]?
+      console.log(photo)
       setImgObj(photo)
       setSelectedImage(photo.uri); // Update the selected image with the URI of the captured photo
       setStartCamera(false); // Turn off the camera view after taking the picture
@@ -138,15 +139,32 @@ export default function App() {
     if(selectedImage != null){
       // const base64Img = imageToBase64(selectedImage)
       const imgData = new FormData();
-      imgData.append('image', {
+      imgObj.type ? (imgData.append('image', {
         uri: imgObj.uri,
         type: imgObj.type,
         name: imgObj.fileName
-      });
-      console.log(imgData)
+      })) : (imgData.append('image', {
+        uri: imgObj.uri,
+        type: ".jpg",
+        name: "image"
+      }))
+//       if (!imgObj.type){
+        // imgData.append('image', {
+        //   uri: imgObj.uri,
+        //   type: ".jpg",
+        //   name: "image"
+        // });
+//       }
+//       else
+// (      imgData.append('image', {
+//         uri: imgObj.uri,
+//         type: imgObj.type,
+//         name: imgObj.fileName
+//       }))
+//       console.log(imgData)
 
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
-      fetch('https://64ee-69-114-91-11.ngrok-free.app/classify', {
+      fetch('https://cff7-69-114-91-11.ngrok-free.app/classify', {
         method: 'POST',
         // headers: {
         //   'Accept': 'application/json',
@@ -260,7 +278,7 @@ const styles = StyleSheet.create({
     bottom: -40,
   },
   flipCam:{
-    bottom: 290
+    bottom: 155
   },
   button: {
     flex: 1,
