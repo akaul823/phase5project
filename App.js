@@ -146,7 +146,7 @@ export default function App() {
       console.log(imgData)
 
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
-      fetch('https://0b0e-71-190-177-64.ngrok-free.app/classify', {
+      fetch('https://64ee-69-114-91-11.ngrok-free.app/classify', {
         method: 'POST',
         // headers: {
         //   'Accept': 'application/json',
@@ -204,13 +204,10 @@ export default function App() {
       </View>
       ) : (
         <View style={styles.footerContainer}>
+
           <Button theme="primary" label="Choose a photo" onPress={()=>{
             setStartCamera(false)
             pickImageAsync()}} />
-          {/* <Button label="Use this photo" onPress={() => {
-            setStartCamera(false)
-            setShowAppOptions(true)
-           }} /> */}
           <Button label="Open Camera" onPress={openCamera} />
         </View>
       )}
@@ -235,12 +232,19 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   footerContainer: {
-    flex: 1/3,
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center'
   },
   optionsContainer: {
     position: 'absolute',
     bottom: 80,
+  },
+  appName: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 20, // You can adjust the margin as needed
   },
   optionsRow: {
     alignItems: 'center',
