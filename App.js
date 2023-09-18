@@ -139,13 +139,13 @@ export default function App() {
           <Camera style={styles.camera} type={type} ref={cameraRef}>
             <View style={styles.flipCam}>
               <TouchableOpacity onPress={toggleCameraType}>
-                <Text style={styles.text}>Flip</Text>
+                <Text style={styles.flipCam}>Flip</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.takePic}>
               <TouchableOpacity onPress={takePictureAsync}>
-              <Text style={styles.text}>Take Picture</Text>
+              <Text style={styles.text}> Take Picture</Text>
             </TouchableOpacity>
             </View>
 
@@ -153,7 +153,7 @@ export default function App() {
               <TouchableOpacity onPress={()=>{
             setStartCamera(false)
             }}>
-                <Text style={styles.text}>X</Text>
+                <Text style={styles.closeButton}>X</Text>
               </TouchableOpacity>
             </View>
 
@@ -190,10 +190,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#25292e',
     alignItems: 'center',
+    
   },
   imageContainer: {
     flex: 1,
     paddingTop: 58,
+    
   },
   image: {
     width: 320,
@@ -229,16 +231,30 @@ const styles = StyleSheet.create({
     bottom: -40,
   },
   flipCam:{
-    bottom: 155
+    bottom: -70,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'white',
+    right: -5,
   },
   button: {
     flex: 1,
     alignSelf: 'flex-end',
     alignItems: 'center',
   },
+  closeButton: {
+    position: 'absolute',
+    top: -39,
+    right: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+    
   },
  });
+
