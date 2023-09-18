@@ -95,6 +95,7 @@ export default function App() {
   const onAddSticker = async () => {
 
     if(selectedImage != null){
+      setIsModelReady(true)
       const imgData = new FormData();
       imgObj.type ? (imgData.append('image', {
         uri: imgObj.uri,
@@ -117,6 +118,7 @@ export default function App() {
       })
       .then(res=>res.json())
       .then(data=>{getName(data)
+        setIsModelReady(false)
 
       })
     };
@@ -155,7 +157,7 @@ export default function App() {
             </View>
 
           </Camera>
-        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} flowerInfo={flowerInfo} />
+        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} flowerInfo={flowerInfo} isModelReady={isModelReady} />
       }
       </View>
       {showAppOptions ? (
