@@ -1,16 +1,54 @@
-import { StyleSheet, Image } from 'react-native';
+// import { StyleSheet, Image } from 'react-native';
 
-export default function ImageViewer({ placeholderImage, selectedImage }) {
-    const imageSource = selectedImage  ? { uri: selectedImage } : placeholderImage;
+// export default function ImageViewer({ placeholderImage, selectedImage, flowerInfo }) {
+//     const imageSource = selectedImage  ? { uri: selectedImage } : placeholderImage;
+//   return (
+//     <Image source={imageSource} style={styles.image} />
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   image: {
+//     width: 320,
+//     height: 440,
+//     borderRadius: 18,
+//   },
+// });
+import React from 'react';
+import { View, Image, Text } from 'react-native';
+
+const ImageViewer = ({ placeholderImage, selectedImage, flowerInfo }) => {
   return (
-    <Image source={imageSource} style={styles.image} />
+    <View style={styles.imageContainer}>
+      <Image
+        source={selectedImage ? { uri: selectedImage } : placeholderImage}
+        style={styles.image}
+      />
+      {flowerInfo && (
+        <Text style={styles.flowerInfo}>{`Flower Name: ${flowerInfo.charAt(0).toUpperCase() + flowerInfo.slice(1)}`}</Text>
+      )}
+    </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
+const styles = {
+  imageContainer: {
+    flex: 1,
+    paddingTop: 58,
+    alignItems: 'center',
+  },
   image: {
     width: 320,
     height: 440,
     borderRadius: 18,
   },
-});
+  flowerInfo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: 10,
+  },
+};
+
+export default ImageViewer;
+

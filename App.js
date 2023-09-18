@@ -7,21 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 import CircleButton from './components/CircleButton';
 import IconButton from './components/IconButton';
 import { Camera, CameraType } from 'expo-camera';
-import * as Permissions from 'expo-permissions';
-import { encode, decode } from 'base-64';
-import * as FileSystem from 'expo-file-system';
 
-// https://www.youtube.com/watch?v=pBEYprNAs4c Uploading using expo file system
 
-// const imgDir = FileSystem.documentDirectory + 'images';
-// const ensureDirExists = async()=>{
-//   const dirInfo = await FileSystem.getInfoAsync(imgDir);
-//   if (!dirInfo.exists){
-//     await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true})
-//   }
-// }
-
-// const PlaceholderImage = {uri: './assets/images/rose.jpg'}
 const PlaceholderImage = require('./assets/images/rose.jpg')
 console.log(`Here's my placeholder:`)
 console.log(PlaceholderImage)
@@ -36,34 +23,6 @@ export default function App() {
   const [imgObj, setImgObj] = useState(null);
   const [flowerInfo, setFlowerInfo]  = useState("")
   const cameraRef = useRef(null);
-
-  // Converting an image to base 64 using Expo File System
-  // const imageToBase64 = async (uri) => {
-  //   try {
-  //     const base64 = await FileSystem.readAsStringAsync(uri, {
-  //       encoding: FileSystem.EncodingType.Base64,
-  //     });
-  //     // console.log(base64.slice(0, 10))
-  //     // return `data:image/jpeg;base64,${base64}`;
-  //     return base64
-  //   } catch (error) {
-  //     console.error('Error converting image to base64:', error);
-  //     return null;
-  //   }
-  // };
-
-  // Concerting base64 encoded image as BLOB
-  // const convertBase64ToBlob = (base64, contentType) => {
-  //   const binary = decode(base64);
-  //   const byteArray = new Uint8Array(binary.length);
-  
-  //   for (let i = 0; i < binary.length; i++) {
-  //     byteArray[i] = binary.charCodeAt(i);
-  //   }
-  
-  //   return new Blob([byteArray], { type: contentType });
-  // };
-
 
   // launch the image library and pick an image
   const pickImageAsync = async () => {
@@ -121,7 +80,6 @@ export default function App() {
   const takePictureAsync = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      // photo.assets[0]?
       console.log(photo)
       setImgObj(photo)
       setSelectedImage(photo.uri); // Update the selected image with the URI of the captured photo
@@ -137,7 +95,6 @@ export default function App() {
   const onAddSticker = async () => {
 
     if(selectedImage != null){
-      // const base64Img = imageToBase64(selectedImage)
       const imgData = new FormData();
       imgObj.type ? (imgData.append('image', {
         uri: imgObj.uri,
@@ -148,20 +105,6 @@ export default function App() {
         type: ".jpg",
         name: "image"
       }))
-//       if (!imgObj.type){
-        // imgData.append('image', {
-        //   uri: imgObj.uri,
-        //   type: ".jpg",
-        //   name: "image"
-        // });
-//       }
-//       else
-// (      imgData.append('image', {
-//         uri: imgObj.uri,
-//         type: imgObj.type,
-//         name: imgObj.fileName
-//       }))
-//       console.log(imgData)
 
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
       fetch('https://cff7-69-114-91-11.ngrok-free.app/classify', {
@@ -173,12 +116,15 @@ export default function App() {
         body: imgData,
       })
       .then(res=>res.json())
-      .then(data=>{
-        alert(`This is a ${data["flowerName"]}`)
-        // setFlowerInfo(data["flowerName"])
-        // console.log(flowerInfo)
+      .then(data=>{getName(data)
+
       })
     };
+     }
+     function getName(data){
+      let name = data["flowerName"]
+      setFlowerInfo(name)
+      // alert(`This is a ${name}`)
      }
 
 
@@ -209,14 +155,16 @@ export default function App() {
             </View>
 
           </Camera>
-        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} />
+        ) : <ImageViewer placeholderImage={PlaceholderImage} selectedImage={selectedImage} flowerInfo={flowerInfo} />
       }
       </View>
       {showAppOptions ? (
         <View style={styles.optionsContainer}>
         <View style={styles.optionsRow}>
           <IconButton icon="refresh" label="Reset" onPress={onReset} />
-          <CircleButton onPress={onAddSticker} />
+          <CircleButton onPress={(e)=>{
+            onAddSticker(e)
+            }} />
           <IconButton icon="save-alt" label="Save" onPress={onSaveImageAsync} />
         </View>
       </View>
