@@ -62,6 +62,7 @@ export default function App() {
   const onReset = () => {
     setShowAppOptions(false);
     setSelectedImage(!selectedImage)
+    setFlowerInfo("")
     // setFlowerInfo(!flowerInfo)
   };
 
@@ -119,8 +120,9 @@ export default function App() {
         body: imgData,
       })
       .then(res=>res.json())
-      .then(data=>{getName(data)
+      .then(data=>{
         setIsModelReady(false)
+        getName(data)
 
       })
     };
