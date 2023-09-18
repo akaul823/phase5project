@@ -61,6 +61,7 @@ export default function App() {
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
+    setSelectedImage(!selectedImage)
   };
 
   const onSaveImageAsync = async () => {

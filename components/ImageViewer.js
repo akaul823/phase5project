@@ -1,25 +1,10 @@
-// import { StyleSheet, Image } from 'react-native';
-
-// export default function ImageViewer({ placeholderImage, selectedImage, flowerInfo }) {
-//     const imageSource = selectedImage  ? { uri: selectedImage } : placeholderImage;
-//   return (
-//     <Image source={imageSource} style={styles.image} />
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   image: {
-//     width: 320,
-//     height: 440,
-//     borderRadius: 18,
-//   },
-// });
 import React from 'react';
 import { View, Image, Text } from 'react-native';
 
 const ImageViewer = ({ placeholderImage, selectedImage, flowerInfo, isModelReady }) => {
   return (
     <View style={styles.imageContainer}>
+      <Text style={styles.classifyText}>classify</Text>
       <Image
         source={selectedImage ? { uri: selectedImage } : placeholderImage}
         style={styles.image}
@@ -51,6 +36,12 @@ const styles = {
     fontWeight: 'bold',
     color: 'white',
     marginTop: 10,
+  },
+  classifyText: {
+    fontSize: 32, // Adjust the size as needed
+    fontWeight: 'bold', // Make it bold
+    color: 'green', // Choose a color that fits your app's theme
+    marginBottom: 10, // Add some spacing
   },
   flowerInfo: {
     fontSize: 18,
