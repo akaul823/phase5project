@@ -56,8 +56,6 @@ export default function App() {
   };
   // Function to pick an image based on the platform
 
-
-
   //This resets options
   const onReset = () => {
     setShowAppOptions(false);
@@ -111,7 +109,7 @@ export default function App() {
       }))
 
       // I changed to port 8000. URL is dependnent on NGROK forwarding URL
-      fetch('https://cff7-69-114-91-11.ngrok-free.app/classify', {
+      fetch('https://e471-69-114-91-11.ngrok-free.app/classify', {
         method: 'POST',
         // headers: {
         //   'Accept': 'application/json',
