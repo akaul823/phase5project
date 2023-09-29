@@ -40,7 +40,10 @@ The Flower Image Classifier App allows users to identify different species of fl
 Scan the QR code with the Expo Go app on your mobile device.
 
 ### Demo
--Placeholder
+
+[![Flower Image Classifier App Demo](http://img.youtube.com/vi/v2DMubJlMyU/0.jpg)](https://youtu.be/v2DMubJlMyU?feature=shared)
+
+Click the image above to watch the demo video.
 
 ## System Architecture
 
@@ -48,9 +51,9 @@ Scan the QR code with the Expo Go app on your mobile device.
 
 2. **Conversion to TFLite**: After training, the model was converted into the TFLite format using TensorFlow's converter.
 
-3. **Backend Server**: The Flask server accepts image uploads from the React Native app, runs inference using the TFLite model, and sends the predicted flower species back to the app.
+3. **Backend Server**: The Flask server accepts captured photos and image uploads from the React Native app, runs inference using the TFLite model; a number is returned, which is then mapped onto a list of labels and then sends the predicted flower species back to the app.
 
-4. **React Native App**: Built using React Native and Expo, the app provides an intuitive interface for the user to either capture a new photo or choose an existing one. Once the image is selected, it's sent to the Flask server for prediction. A number is returned, which is then mapped onto a list of labels. 
+4. **React Native App**: Built using React Native and Expo, the app provides an intuitive interface for the user to either capture a new photo or choose an existing one. Once the image is selected, it's sent to the Flask server for prediction. 
 
 ## Contributing
 
